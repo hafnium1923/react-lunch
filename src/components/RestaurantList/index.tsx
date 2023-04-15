@@ -44,9 +44,20 @@ class RestaurantList extends Component<RestaurantListProps, State> {
   }
 
   async componentDidMount() {
-    const restaurantList = await fetchMockRestaurants({ align: BY_NAME });
+    if (!localStorage.getItem("restaurantList")) {
+      const data = await fetchMockRestaurants({ align: BY_NAME });
+      localStorage.setItem("restaurantList", JSON.stringify(data));
+    }
 
-    this.setState({ restaurantListOrigin: restaurantList, restaurantList });
+    const restaurantList = localStorage.getItem("restaurantList");
+
+    if (restaurantList) {
+      const restaurantListOrigin = JSON.parse(restaurantList);
+      this.setState({
+        restaurantListOrigin,
+        restaurantList: restaurantListOrigin,
+      });
+    }
   }
 
   componentDidUpdate(prevProps: Readonly<RestaurantListProps>): void {

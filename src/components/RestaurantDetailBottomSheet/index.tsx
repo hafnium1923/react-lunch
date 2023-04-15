@@ -1,4 +1,4 @@
-import React, { Component, ReactNode } from "react";
+import React, { useState, useEffect } from "react";
 import { Restaurant } from "../../types/restaurants";
 import CategoryImg from "../CategoryImg";
 import St from "./styled";
@@ -8,40 +8,32 @@ interface RestaurantDetailBottomSheetProps {
   close: VoidFunction;
 }
 
-class RestaurantDetailBottomSheet extends Component<RestaurantDetailBottomSheetProps> {
-  escHandler(e: KeyboardEvent) {
-    if (e.key === "Escape") this.props.close();
-  }
+export default function RestaurantDetailBottomSheet({
+  restaurant: { title, distance, detail, link, category },
+  close,
+}: RestaurantDetailBottomSheetProps) {
+  const escHandler = (e: KeyboardEvent) => {
+    if (e.key === "Escape") close();
+  };
+  useEffect(() => {
+    window.addEventListener("keyup", escHandler);
 
-  componentDidMount(): void {
-    window.addEventListener("keyup", this.escHandler.bind(this));
-  }
+    return () => window.removeEventListener("keyup", escHandler);
+  });
 
-  componentWillUnmount(): void {
-    window.removeEventListener("keyup", this.escHandler.bind(this));
-  }
-
-  render(): ReactNode {
-    const {
-      restaurant: { title, distance, detail, link, category },
-      close,
-    } = this.props;
-    return (
-      <>
-        <St.Backdrop onClick={close} />
-        <St.BottomSheet>
-          <CategoryImg category={category} />
-          <St.Detail>
-            <St.Title>{title}</St.Title>
-            <St.Distance>캠퍼스부터 {distance}분 이내</St.Distance>
-            <St.Description>{detail}</St.Description>
-            <St.Link href={link}>{link}</St.Link>
-            <St.Button onClick={close}>닫기</St.Button>
-          </St.Detail>
-        </St.BottomSheet>
-      </>
-    );
-  }
+  return (
+    <>
+      <St.Backdrop onClick={close} />
+      <St.BottomSheet>
+        <CategoryImg category={category} />
+        <St.Detail>
+          <St.Title>{title}</St.Title>
+          <St.Distance>캠퍼스부터 {distance}분 이내</St.Distance>
+          <St.Description>{detail}</St.Description>
+          <St.Link href={link}>{link}</St.Link>
+          <St.Button onClick={close}>닫기</St.Button>
+        </St.Detail>
+      </St.BottomSheet>
+    </>
+  );
 }
-
-export default RestaurantDetailBottomSheet;
