@@ -17,27 +17,27 @@ export default function useRestaurant(
   >([]);
   const [restaurantList, setRestaurantList] = useState<Restaurant[]>([]);
 
+  const setData = async () => {
+    const data = await fetchMockRestaurants({ align: BY_NAME });
+    localStorage.setItem("restaurantListOrigin", JSON.stringify(data));
+    setList(JSON.stringify(data));
+  };
+
+  const setList = async (data: string) => {
+    const list = await JSON.parse(data);
+    setRestaurantList(list);
+    setRestaurantListOrigin(list);
+  };
+
   useEffect(() => {
-    const setData = async () => {
-      const data = await fetchMockRestaurants({ align: BY_NAME });
-      localStorage.setItem("restaurantListOrigin", JSON.stringify(data));
-      setList(JSON.stringify(data));
-    };
-
-    const setList = async (data: string) => {
-      const list = await JSON.parse(data);
-      setRestaurantList(list);
-      setRestaurantListOrigin(list);
-    };
-
-    if (!localStorage.getItem("restaurantListOrigin")) {
-      setData();
-    }
-
     const data = localStorage.getItem("restaurantListOrigin");
-    if (data) {
-      setList(data);
+
+    if (!data) {
+      setData();
+      return;
     }
+
+    setList(data);
   }, []);
 
   useEffect(() => {
